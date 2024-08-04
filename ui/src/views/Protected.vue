@@ -16,7 +16,13 @@
 </template>
 
 <script>
-import { API_URL, PROTECTED_ENDPOINT, INACTIVITY_LIMIT, RENEW_ENDPOINT } from '@/config.js';
+import { 
+  API_URL, 
+  PROTECTED_ENDPOINT, 
+  INACTIVITY_LIMIT, 
+  RENEW_ENDPOINT, 
+  RENEW_LIMIT 
+} from '@/config.js';
 
 export default {
   name: 'ProtectedPage',
@@ -30,11 +36,12 @@ export default {
   },
 
   mounted() {
-    this.checkAuthentication();
-    this.startInactivityTimer();
-    this.startRenewalTimer();
+    this.checkAuthentication(); // Verifica se está autenticado
+    this.startInactivityTimer(); // Inicia temporizador de inatividade
+    this.startRenewalTimer(); // Inicia temporizador de renovação de token
   },
-  beforeUnmount() {
+  
+  unmounted() {
     clearInterval(this.inactivityTimer);
     clearInterval(this.renewalTimer);
     document.removeEventListener('mousemove', this.resetActivity);
@@ -73,6 +80,26 @@ export default {
       }
     },
 
+    async renewToken() {
+      try {
+        const token = sessionStorage.getItem('authToken');
+        const response = await fetch(`${API_URL}${RENEW_ENDPOINT}`, {
+          method: 'GET',
+          headers: {
+            'Authorization': `${token}`
+          }
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          sessionStorage.setItem('authToken', data.token);
+        }
+      } catch (error) {
+        console.error('Error renewing token:', error);
+        this.logout();
+      }
+    },
+
     goToLogin() {
       this.$router.push('/login');
     },
@@ -94,27 +121,7 @@ export default {
     startRenewalTimer() {
       this.renewalTimer = setInterval(() => {
         this.renewToken();
-      }, 30 * 1000); // Renovar 1 minuto antes de expirar
-    },
-
-    async renewToken() {
-      try {
-        const token = sessionStorage.getItem('authToken');
-        const response = await fetch(`${API_URL}${RENEW_ENDPOINT}`, {
-          method: 'GET',
-          headers: {
-            'Authorization': `${token}`
-          }
-        });
-
-        if (response.ok) {
-          const data = await response.json();
-          sessionStorage.setItem('authToken', data.token);
-        }
-      } catch (error) {
-        console.error('Error renewing token:', error);
-        this.logout();
-      }
+      }, RENEW_LIMIT);
     },
 
     resetActivity() {

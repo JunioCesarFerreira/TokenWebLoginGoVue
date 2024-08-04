@@ -5,5 +5,5 @@ export const SUCCESS_MESSAGE = 'Login successful';
 export const FAILURE_MESSAGE = 'Login failed';
 export const ERROR_MESSAGE = 'An error occurred';
 export const RENEW_ENDPOINT = '/renew';
-export const INACTIVITY_LIMIT = 1 * 60 * 1000;
-//export const INACTIVITY_LIMIT = 5 * 60 * 1000; // 5 minutos de inatividade
+export const INACTIVITY_LIMIT = 2 * 60 * 1000; // 2 minutos sem atividade
+export const RENEW_LIMIT = 50 * 1000; // Renova token a cada 50 segundos, pois os tokens expiram em 1 minuto

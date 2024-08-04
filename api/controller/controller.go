@@ -53,6 +53,7 @@ func (c Controller) Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// Gera token com 1 minuto de valiade
 	resp, err := c.authProvider.GetToken(user, 1)
 	if err != nil {
 		fmt.Printf("Error: %v\n", err)
