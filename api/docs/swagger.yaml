@@ -37,9 +37,9 @@ paths:
       - Login
   /protected:
     get:
-      description: Testando Token JWT
+      description: Testando Token
       parameters:
-      - description: JWT Token
+      - description: Token
         in: header
         name: Authorization
         required: true
@@ -49,7 +49,27 @@ paths:
       responses:
         "200":
           description: OK
-      summary: Rota protegida com autenticação JWT
+      summary: Rota protegida com autenticação utilizando Token
+      tags:
+      - Login
+  /renew:
+    get:
+      description: Renova o token de autenticação se o token atual for válido e está
+        prestes a expirar
+      parameters:
+      - description: Token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Token renovado com sucesso
+          schema:
+            type: string
+      summary: Renova o token de autenticação
       tags:
       - Login
 swagger: "2.0"

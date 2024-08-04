@@ -53,18 +53,18 @@ const docTemplate = `{
         },
         "/protected": {
             "get": {
-                "description": "Testando Token JWT",
+                "description": "Testando Token",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
                     "Login"
                 ],
-                "summary": "Rota protegida com autenticação JWT",
+                "summary": "Rota protegida com autenticação utilizando Token",
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "JWT Token",
+                        "description": "Token",
                         "name": "Authorization",
                         "in": "header",
                         "required": true
@@ -73,6 +73,35 @@ const docTemplate = `{
                 "responses": {
                     "200": {
                         "description": "OK"
+                    }
+                }
+            }
+        },
+        "/renew": {
+            "get": {
+                "description": "Renova o token de autenticação se o token atual for válido e está prestes a expirar",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Login"
+                ],
+                "summary": "Renova o token de autenticação",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Token renovado com sucesso",
+                        "schema": {
+                            "type": "string"
+                        }
                     }
                 }
             }

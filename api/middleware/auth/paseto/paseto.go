@@ -56,8 +56,6 @@ func (p pasetoAuth) GetToken(user auth.AuthData, interval int) (map[string]strin
 // Middleware para autenticar o token PASETO
 func (p pasetoAuth) Authenticate(next http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		fmt.Println("\nauthenticate")
-
 		cors.EnableCors(&w)
 
 		if r.Method == "OPTIONS" {

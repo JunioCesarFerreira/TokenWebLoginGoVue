@@ -2,6 +2,7 @@ package jwt
 
 import (
 	"crypto/rand"
+	"encoding/json"
 	"fmt"
 	"main/middleware/auth"
 	"main/middleware/cors"
@@ -47,6 +48,9 @@ func (j jwtAuth) GetToken(user auth.AuthData, interval int) (map[string]string, 
 		return nil, err
 	}
 
+	fmt.Println("DEBUG new JWT Token")
+	fmt.Println(tokenString)
+
 	resp := map[string]string{"token": tokenString}
 	return resp, nil
 }
@@ -54,8 +58,6 @@ func (j jwtAuth) GetToken(user auth.AuthData, interval int) (map[string]string, 
 // Middleware para autenticar o token JWT
 func (j jwtAuth) Authenticate(next http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		fmt.Println("\nauthenticate")
-
 		cors.EnableCors(&w)
 
 		if r.Method == "OPTIONS" {
@@ -63,6 +65,9 @@ func (j jwtAuth) Authenticate(next http.HandlerFunc) http.HandlerFunc {
 		}
 
 		tokenString := r.Header.Get("Authorization")
+
+		fmt.Println("DEBUG received JWT Token")
+		fmt.Println(tokenString)
 
 		fmt.Println(tokenString)
 
@@ -100,5 +105,36 @@ func (j jwtAuth) Authenticate(next http.HandlerFunc) http.HandlerFunc {
 			http.Error(w, "Unauthorized", http.StatusUnauthorized)
 			return
 		}
+	}
+}
+
+func (j jwtAuth) Renew(tokenString string, w http.ResponseWriter) {
+
+	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
+		return j.secretKey, nil
+	})
+
+	if err != nil || !token.Valid {
+		http.Error(w, "Unauthorized", http.StatusUnauthorized)
+		return
+	}
+
+	// Verifica se o token está próximo do vencimento
+	claims := token.Claims.(jwt.MapClaims)
+	expiration := claims["exp"].(float64)
+	if time.Now().Unix() > int64(expiration)-60 { // Renova se expirar em menos de 1 minuto
+		userId := claims["userId"].(string)
+		pass := claims["pass"].(string)
+
+		newToken, err := j.GetToken(auth.AuthData{UserId: userId, Pwd: pass}, 5)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(newToken)
+	} else {
+		w.WriteHeader(http.StatusNotModified) // Não renovado, ainda não precisa
 	}
 }

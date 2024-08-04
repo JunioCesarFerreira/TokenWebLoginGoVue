@@ -4,3 +4,6 @@ export const PROTECTED_ENDPOINT = '/protected';
 export const SUCCESS_MESSAGE = 'Login successful';
 export const FAILURE_MESSAGE = 'Login failed';
 export const ERROR_MESSAGE = 'An error occurred';
+export const RENEW_ENDPOINT = '/renew';
+export const INACTIVITY_LIMIT = 1 * 60 * 1000;
+//export const INACTIVITY_LIMIT = 5 * 60 * 1000; // 5 minutos de inatividade

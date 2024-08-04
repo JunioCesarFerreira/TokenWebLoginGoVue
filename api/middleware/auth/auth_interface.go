@@ -7,4 +7,5 @@ import (
 type Auth interface {
 	Authenticate(next http.HandlerFunc) http.HandlerFunc
 	GetToken(user AuthData, interval int) (map[string]string, error)
+	Renew(tokenString string, w http.ResponseWriter)
 }

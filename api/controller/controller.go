@@ -30,7 +30,7 @@ func New(a auth.Auth, r data.Repository) Controller {
 // @Success 200
 // @Router /login [post]
 func (c Controller) Login(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("login")
+	fmt.Println("---\nlogin endpoint\n---")
 
 	cors.EnableCors(&w)
 
@@ -53,7 +53,7 @@ func (c Controller) Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	resp, err := c.authProvider.GetToken(user, 5)
+	resp, err := c.authProvider.GetToken(user, 1)
 	if err != nil {
 		fmt.Printf("Error: %v\n", err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -71,8 +71,26 @@ func (c Controller) Login(w http.ResponseWriter, r *http.Request) {
 // @Success 200
 // @Router /protected [get]
 func (c Controller) ProtectedEndpoint(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("\nprotected endpoint")
+	fmt.Println("---\nprotected endpoint\n---")
 
 	resp := map[string]string{"message": "Protected route.\nIt works!"}
 	json.NewEncoder(w).Encode(resp)
+}
+
+// @Summary Renova o token de autenticação
+// @Description Renova o token de autenticação se o token atual for válido e está prestes a expirar
+// @Tags Login
+// @Produce json
+// @Param Authorization header string true "Token"
+// @Success 200 {string} string "Token renovado com sucesso"
+// @Router /renew [get]
+func (c Controller) RenewToken(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("---\nrenew endpoint\n---")
+	tokenString := r.Header.Get("Authorization")
+
+	if tokenString == "" {
+		http.Error(w, "Unauthorized", http.StatusUnauthorized)
+		return
+	}
+	c.authProvider.Renew(tokenString, w)
 }

@@ -37,6 +37,7 @@ func main() {
 
 	router.HandleFunc("/login", controller.Login).Methods("POST", "OPTIONS")
 	router.HandleFunc("/protected", authProvider.Authenticate(controller.ProtectedEndpoint)).Methods("GET", "OPTIONS")
+	router.HandleFunc("/renew", authProvider.Authenticate(controller.RenewToken)).Methods("GET", "OPTIONS")
 
 	//Documentação da API
 	router.PathPrefix("/swagger").Handler(httpSwagger.WrapHandler)

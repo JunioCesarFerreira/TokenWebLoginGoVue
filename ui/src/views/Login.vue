@@ -18,7 +18,13 @@
 
 <script>
 import CryptoJS from 'crypto-js';
-import { API_URL, LOGIN_ENDPOINT, SUCCESS_MESSAGE, FAILURE_MESSAGE, ERROR_MESSAGE } from '@/config.js';
+import { 
+  API_URL, 
+  LOGIN_ENDPOINT, 
+  SUCCESS_MESSAGE, 
+  FAILURE_MESSAGE, 
+  ERROR_MESSAGE 
+} from '@/config.js';
 
 export default {
   name: 'LoginForm',
