@@ -12,7 +12,7 @@ info:
     name: Junio Cesar Ferreira
   license:
     name: MIT
-  title: JWT Login API
+  title: Token Login API
   version: 1.0.0
 paths:
   /login:

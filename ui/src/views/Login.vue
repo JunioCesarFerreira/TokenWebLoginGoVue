@@ -36,6 +36,7 @@ export default {
     };
   },
   methods: {
+
     validateInput(event) {
       const value = event.target.value;
       if (value.includes('<') || value.includes('>')) {
@@ -43,6 +44,7 @@ export default {
         this.message = 'Invalid characters removed';
       }
     },
+
     async login() {
       try {
         const hashedPwd = CryptoJS.SHA512(this.hash).toString(CryptoJS.enc.Hex);
@@ -61,6 +63,7 @@ export default {
         this.handleError();
       }
     },
+
     async makeLoginRequest(userId, hashedPwd) {
       return await fetch(`${API_URL}${LOGIN_ENDPOINT}`, {
         method: 'POST',
@@ -73,15 +76,18 @@ export default {
         })
       });
     },
+
     handleSuccess(token) {
       this.message = SUCCESS_MESSAGE;
       sessionStorage.setItem('authToken', token);
       this.$router.push('/protected');
     },
+
     handleFailure() {
       sessionStorage.setItem('authToken', null);
       this.message = FAILURE_MESSAGE;
     },
+    
     handleError() {
       this.message = ERROR_MESSAGE;
     }

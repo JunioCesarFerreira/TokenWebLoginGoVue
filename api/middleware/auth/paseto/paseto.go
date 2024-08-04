@@ -2,6 +2,7 @@ package paseto
 
 import (
 	"crypto/rand"
+	"encoding/json"
 	"fmt"
 	"main/middleware/auth"
 	"main/middleware/cors"
@@ -12,17 +13,17 @@ import (
 	"golang.org/x/crypto/chacha20poly1305"
 )
 
-type pasetoAuth struct {
+type PasetoAuth struct {
 	symmetricKey []byte
 }
 
-func NewPasetoAuth() pasetoAuth {
-	pl := pasetoAuth{}
+func NewPasetoAuth() *PasetoAuth {
+	pl := &PasetoAuth{}
 	pl.initialize()
 	return pl
 }
 
-func (p pasetoAuth) initialize() {
+func (p *PasetoAuth) initialize() {
 	// Gera uma chave simétrica de 32 bytes para PASETO
 	p.symmetricKey = make([]byte, chacha20poly1305.KeySize)
 	if _, err := rand.Read(p.symmetricKey); err != nil {
@@ -30,7 +31,7 @@ func (p pasetoAuth) initialize() {
 	}
 }
 
-func (p pasetoAuth) GetToken(user auth.AuthData, interval int) (map[string]string, error) {
+func (p *PasetoAuth) GetToken(user auth.AuthData, interval int) (map[string]string, error) {
 	// Gera um token PASETO com tempo de expiração
 	now := time.Now()
 	expiration := now.Add(time.Duration(interval) * time.Minute)
@@ -49,12 +50,15 @@ func (p pasetoAuth) GetToken(user auth.AuthData, interval int) (map[string]strin
 		return nil, err
 	}
 
+	fmt.Println("DEBUG new PASETO Token")
+	fmt.Println(token)
+
 	resp := map[string]string{"token": token}
 	return resp, nil
 }
 
 // Middleware para autenticar o token PASETO
-func (p pasetoAuth) Authenticate(next http.HandlerFunc) http.HandlerFunc {
+func (p *PasetoAuth) Authenticate(next http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		cors.EnableCors(&w)
 
@@ -63,6 +67,9 @@ func (p pasetoAuth) Authenticate(next http.HandlerFunc) http.HandlerFunc {
 		}
 
 		tokenString := r.Header.Get("Authorization")
+
+		fmt.Println("DEBUG received PASETO Token")
+		fmt.Println(tokenString)
 
 		if tokenString == "" {
 			fmt.Println("token is empty")
@@ -87,5 +94,33 @@ func (p pasetoAuth) Authenticate(next http.HandlerFunc) http.HandlerFunc {
 		}
 
 		next.ServeHTTP(w, r)
+	}
+}
+
+func (p *PasetoAuth) Renew(tokenString string, w http.ResponseWriter) {
+	var jsonToken paseto.JSONToken
+	var footer string
+
+	err := paseto.NewV2().Decrypt(tokenString, p.symmetricKey, &jsonToken, &footer)
+	if err != nil {
+		http.Error(w, "Unauthorized", http.StatusUnauthorized)
+		return
+	}
+
+	// Verifica se o token está próximo do vencimento
+	if time.Until(jsonToken.Expiration) < time.Minute {
+		userId := jsonToken.Subject
+		pass := jsonToken.Get("pass")
+
+		newToken, err := p.GetToken(auth.AuthData{UserId: userId, Pwd: pass}, 5)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(newToken)
+	} else {
+		w.WriteHeader(http.StatusNotModified) // Não renovado, ainda não precisa
 	}
 }

@@ -1,7 +1,7 @@
 {
     "swagger": "2.0",
     "info": {
-        "title": "JWT Login API",
+        "title": "Token Login API",
         "contact": {
             "name": "Junio Cesar Ferreira"
         },
