@@ -31,14 +31,14 @@ export default {
   },
   methods: {
     checkAuthentication() {
-      const token = localStorage.getItem('authToken');
+      const token = sessionStorage.getItem('authToken');
       console.log("token local storage", token)
       this.isAuthenticated = (token !== "null");
       console.log("is auth = ", this.isAuthenticated)
     },
     async fetchMessage() {
       try {
-        const token = localStorage.getItem('authToken');
+        const token = sessionStorage.getItem('authToken');
         const response = await fetch(`${API_URL}${PROTECTED_ENDPOINT}`, {
           method: 'GET',
           headers: {
