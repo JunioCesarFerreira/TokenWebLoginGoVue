@@ -1,0 +1,55 @@
+basePath: /
+definitions:
+  auth.AuthData:
+    properties:
+      pass:
+        type: string
+      userId:
+        type: string
+    type: object
+info:
+  contact:
+    name: Junio Cesar Ferreira
+  license:
+    name: MIT
+  title: JWT Login API
+  version: 1.0.0
+paths:
+  /login:
+    post:
+      consumes:
+      - application/json
+      description: Verifica se usuário é registrado e realiza login
+      parameters:
+      - description: Usuário e Hash
+        in: body
+        name: LoginRequest
+        required: true
+        schema:
+          $ref: '#/definitions/auth.AuthData'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+      summary: Tenta validar usuário e fazer login
+      tags:
+      - Login
+  /protected:
+    get:
+      description: Testando Token JWT
+      parameters:
+      - description: JWT Token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+      summary: Rota protegida com autenticação JWT
+      tags:
+      - Login
+swagger: "2.0"
