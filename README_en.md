@@ -106,6 +106,13 @@ TokenWebLoginGoVue/
 3. **Automatic Renewal**: Tokens are automatically renewed while the user is active.
 4. **Idle Logout**: The user will be logged out after 5 minutes of inactivity.
 
+## Notes
+
+- [Security Features](./notes/feature_pt.md)
+
+- [Brief Comparison JWT vs PASETO](./notes/token_compare_pt.md)
+
+
 ## Contribution
 
 Contributions are welcome! Feel free to open issues or pull requests for improvements and fixes.

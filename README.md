@@ -106,6 +106,13 @@ TokenWebLoginGoVue/
 3. **Renovação Automática**: Os tokens são renovados automaticamente enquanto o usuário estiver ativo.
 4. **Logout por Inatividade**: O usuário será desconectado após 5 minutos de inatividade.
 
+## Notas
+
+- [Características de Segurança](./notes/feature_pt.md)
+
+- [Breve Comparação JWT vs PASETO](./notes/token_compare_pt.md)
+
+
 ## Contribuição
 
 Contribuições são bem-vindas! Sinta-se à vontade para abrir issues ou pull requests para melhorias e correções.
