@@ -81,22 +81,24 @@ TokenWebLoginGoVue é um projeto que demonstra um sistema de autenticação comp
 ```plaintext
 TokenWebLoginGoVue/
 │
-├── api/                     # Código do servidor Go
-│   ├── main.go              # Entrada principal do aplicativo Go
-│   ├── controller/          # Controladores da API
-│   ├── middleware/          # Middleware de autenticação
-│   ├── data/                # Repositório de dados
-│   └── docs/                # Documentação Swagger gerenciada com swaggo
+├── api/                     # Go server code
+│   ├── main.go              # Main entry point of the Go application
+│   ├── controller/          # API controllers
+│   ├── middleware/          # Authentication middleware
+│   ├── data/                # Data repository
+│   ├── docs/                # Swagger documentation managed with swaggo
+│   └── Dockerfile           # Arquivo docker para gerar imagem da api
 │
-└── ui/                      # Código da interface Vue.js
+└── ui/                      # Vue.js interface code
     ├── src/
-    │   ├── components/      # Componentes Vue
-    │   ├── router/          # Configuração de rotas
-    │   ├── views/           # Páginas Vue
-    │   ├── App.vue          # Componente raiz
-    │   ├── main.js          # Arquivo de entrada Vue.js
-    |   └── config.js        # Configurações de acesso à api e outras constantes do experimento
-    └── public/              # Arquivos estáticos
+    │   ├── components/      # Vue components
+    │   ├── router/          # Router configuration
+    │   ├── views/           # Vue pages
+    │   ├── App.vue          # Root component
+    │   ├── main.js          # Vue.js entry file
+    │   └── config.js        # API access configurations and other experiment constants
+    ├── public/              # Static files
+    └── Dockerfile           # Arquivo docker para gerar imagem da ui
 ```
 
 ## Como Usar
@@ -105,6 +107,15 @@ TokenWebLoginGoVue/
 2. **Página Protegida**: Acesse `/protected` após login bem-sucedido para visualizar a página protegida.
 3. **Renovação Automática**: Os tokens são renovados automaticamente enquanto o usuário estiver ativo.
 4. **Logout por Inatividade**: O usuário será desconectado após 5 minutos de inatividade.
+
+### Utilizando Docker
+
+No diretório principal execute:
+
+```bash
+docker compose build
+docker compose up -d
+```
 
 ## Notas
 

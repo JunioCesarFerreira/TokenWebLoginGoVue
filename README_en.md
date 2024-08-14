@@ -86,7 +86,8 @@ TokenWebLoginGoVue/
 │   ├── controller/          # API controllers
 │   ├── middleware/          # Authentication middleware
 │   ├── data/                # Data repository
-│   └── docs/                # Swagger documentation managed with swaggo
+│   ├── docs/                # Swagger documentation managed with swaggo
+│   └── Dockerfile           # Arquivo docker para gerar imagem da api
 │
 └── ui/                      # Vue.js interface code
     ├── src/
@@ -96,7 +97,8 @@ TokenWebLoginGoVue/
     │   ├── App.vue          # Root component
     │   ├── main.js          # Vue.js entry file
     │   └── config.js        # API access configurations and other experiment constants
-    └── public/              # Static files
+    ├── public/              # Static files
+    └── Dockerfile           # Arquivo docker para gerar imagem da ui
 ```
 
 ## Usage
@@ -105,6 +107,15 @@ TokenWebLoginGoVue/
 2. **Protected Page**: Access `/protected` after a successful login to view the protected page.
 3. **Automatic Renewal**: Tokens are automatically renewed while the user is active.
 4. **Idle Logout**: The user will be logged out after 5 minutes of inactivity.
+
+### Using Docker
+
+In the main directory run:
+
+```bash
+docker compose build
+docker compose up -d
+```
 
 ## Notes
 
