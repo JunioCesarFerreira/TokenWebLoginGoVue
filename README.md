@@ -1,6 +1,6 @@
 # TokenWebLoginGoVue
 
-🌍 *[Português](README.md) ∙ [English](README_en.md)*
+🌍 *[**Português**](README.md) ∙ [English](README_en.md)*
 
 TokenWebLoginGoVue é um projeto que demonstra um sistema de autenticação completo para aplicações web, utilizando Go para o backend e Vue.js para a interface do usuário. O projeto implementa autenticação baseada em tokens, usando JWT (JSON Web Tokens) e PASETO (Platform-Agnostic Security Tokens), permitindo login seguro e gerenciamento de sessões de usuário.
 
