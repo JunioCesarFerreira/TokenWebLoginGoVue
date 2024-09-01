@@ -1,6 +1,7 @@
 package paseto
 
 import (
+	"context"
 	"crypto/rand"
 	"encoding/json"
 	"fmt"
@@ -31,7 +32,7 @@ func (p *PasetoAuth) initialize() {
 	}
 }
 
-func (p *PasetoAuth) GetToken(user auth.AuthData, interval int) (map[string]string, error) {
+func (p *PasetoAuth) GetToken(user auth.AuthData, interval int, instance string) (map[string]string, error) {
 	// Gera um token PASETO com tempo de expiração
 	now := time.Now()
 	expiration := now.Add(time.Duration(interval) * time.Minute)
@@ -44,6 +45,7 @@ func (p *PasetoAuth) GetToken(user auth.AuthData, interval int) (map[string]stri
 
 	// Adiciona dados personalizados
 	jsonToken.Set("pass", user.Pwd)
+	jsonToken.Set("instance", instance)
 
 	token, err := paseto.NewV2().Encrypt(p.symmetricKey, jsonToken, nil)
 	if err != nil {
@@ -93,7 +95,14 @@ func (p *PasetoAuth) Authenticate(next http.HandlerFunc) http.HandlerFunc {
 			return
 		}
 
-		next.ServeHTTP(w, r)
+		// Recupera a instância da sessão do token e utiliza conforme necessário
+		instance := jsonToken.Get("instance")
+		fmt.Println("Instance ID:", instance)
+
+		// Cria um novo contexto com o valor da instância
+		ctx := context.WithValue(r.Context(), "instance", instance)
+
+		next.ServeHTTP(w, r.WithContext(ctx))
 	}
 }
 
@@ -111,8 +120,9 @@ func (p *PasetoAuth) Renew(tokenString string, w http.ResponseWriter) {
 	if time.Until(jsonToken.Expiration) < time.Minute {
 		userId := jsonToken.Subject
 		pass := jsonToken.Get("pass")
+		instance := jsonToken.Get("instance")
 
-		newToken, err := p.GetToken(auth.AuthData{UserId: userId, Pwd: pass}, 5)
+		newToken, err := p.GetToken(auth.AuthData{UserId: userId, Pwd: pass}, 5, instance)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return

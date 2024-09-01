@@ -8,6 +8,7 @@ TokenWebLoginGoVue é um projeto que demonstra um sistema de autenticação comp
 
 - **Autenticação Segura**: Autenticação baseada em tokens usando JWT e PASETO.
 - **Renovação de Tokens**: Tokens são renovados automaticamente para garantir sessões seguras e contínuas.
+- **Inclusão de dados adicionais nos tokens**: Incluímos um ID de instância nos exemplos, o que pode ser útil para a gestão de sessões e para cenários de multi-tenancy.
 - **Logout por Inatividade**: Usuários são automaticamente desconectados após um período de inatividade.
 - **Interface Amigável**: Interface de usuário construída com Vue.js para testes de fluxo de login.
 - **Documentação da API**: Documentação clara e acessível usando Swagger para explorar a API de autenticação.

@@ -7,6 +7,7 @@ import (
 	"main/middleware/auth"
 	"main/middleware/cors"
 	"net/http"
+	"strconv"
 )
 
 type Controller struct {
@@ -47,14 +48,14 @@ func (c Controller) Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	check, err := c.repository.CheckUser(user.UserId, user.Pwd)
+	check, instance, err := c.repository.CheckUser(user.UserId, user.Pwd)
 	if !check || err != nil {
 		http.Error(w, "Invalid name or password", http.StatusUnauthorized)
 		return
 	}
 
 	// Gera token com 1 minuto de valiade
-	resp, err := c.authProvider.GetToken(user, 1)
+	resp, err := c.authProvider.GetToken(user, 1, strconv.Itoa(instance))
 	if err != nil {
 		fmt.Printf("Error: %v\n", err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -74,7 +75,9 @@ func (c Controller) Login(w http.ResponseWriter, r *http.Request) {
 func (c Controller) ProtectedEndpoint(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("---\nprotected endpoint\n---")
 
-	resp := map[string]string{"message": "Protected route.\nIt works!"}
+	instance := r.Context().Value("instance")
+
+	resp := map[string]string{"message": fmt.Sprintf("Protected route.\nIt works!\nInstance: %s\n", instance)}
 	json.NewEncoder(w).Encode(resp)
 }
 

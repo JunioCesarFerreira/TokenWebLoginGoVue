@@ -1,6 +1,7 @@
 package jwt
 
 import (
+	"context"
 	"crypto/rand"
 	"encoding/json"
 	"fmt"
@@ -34,13 +35,14 @@ func (j *JwtAuth) initialize() {
 	}
 }
 
-func (j *JwtAuth) GetToken(user auth.AuthData, interval int) (map[string]string, error) {
+func (j *JwtAuth) GetToken(user auth.AuthData, interval int, instance string) (map[string]string, error) {
 	// Gera o token JWT com tempo de expiração
 	expirationTime := time.Now().Add(time.Duration(interval) * time.Minute).Unix()
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-		"userId": user.UserId,
-		"pass":   user.Pwd,
-		"exp":    expirationTime,
+		"userId":   user.UserId,
+		"pass":     user.Pwd,
+		"exp":      expirationTime,
+		"instance": instance,
 	})
 
 	tokenString, err := token.SignedString(j.secretKey)
@@ -97,7 +99,15 @@ func (j *JwtAuth) Authenticate(next http.HandlerFunc) http.HandlerFunc {
 				return
 			}
 
-			next.ServeHTTP(w, r)
+			// Recupera a instância da sessão do token e utiliza conforme necessário
+			instance := claims["instance"].(string)
+			fmt.Println("Instance ID:", instance)
+
+			// Cria um novo contexto com o valor da instância
+			ctx := context.WithValue(r.Context(), "instance", instance)
+
+			// Passa o contexto para o próximo handler
+			next.ServeHTTP(w, r.WithContext(ctx))
 		} else {
 			fmt.Println("token not valid")
 			http.Error(w, "Unauthorized", http.StatusUnauthorized)
@@ -122,8 +132,9 @@ func (j *JwtAuth) Renew(tokenString string, w http.ResponseWriter) {
 	if time.Now().Unix() > int64(expiration)-60 { // Renova se expirar em menos de 1 minuto
 		userId := claims["userId"].(string)
 		pass := claims["pass"].(string)
+		instance := claims["instance"].(string)
 
-		newToken, err := j.GetToken(auth.AuthData{UserId: userId, Pwd: pass}, 5)
+		newToken, err := j.GetToken(auth.AuthData{UserId: userId, Pwd: pass}, 5, instance)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
