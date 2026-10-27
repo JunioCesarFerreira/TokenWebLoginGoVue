@@ -135,4 +135,4 @@ This project is licensed under the MIT license. See the [LICENSE](LICENSE) file 
 
 ## Contact
 
-For questions or suggestions, contact [your-email@example.com](mailto:jcf_ssp@hotmail.com).
+For questions or suggestions, contact [jcf_ssp@hotmail.com](mailto:jcf_ssp@hotmail.com).
