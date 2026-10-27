@@ -135,4 +135,4 @@ Este projeto está licenciado sob a licença MIT. Veja o arquivo [LICENSE](LICEN
 
 ## Contato
 
-Para dúvidas ou sugestões, entre em contato com [seu-email@example.com](mailto:jcf_ssp@hotmail.com).
+Para dúvidas ou sugestões, entre em contato com [jcf_ssp@hotmail.com](mailto:jcf_ssp@hotmail.com).
