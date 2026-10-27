@@ -132,7 +132,3 @@ Contributions are welcome! Feel free to open issues or pull requests for improve
 ## License
 
 This project is licensed under the MIT license. See the [LICENSE](LICENSE) file for more details.
-
-## Contact
-
-For questions or suggestions, contact [jcf_ssp@hotmail.com](mailto:jcf_ssp@hotmail.com).
